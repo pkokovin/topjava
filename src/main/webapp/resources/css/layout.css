@@ -1,0 +1,14 @@
+th, td {
+    padding: 5px;
+    border: 1px solid;
+}
+
+tr.red {
+    padding: 5px;
+    color: red;
+}
+
+tr.green {
+    padding: 5px;
+    color: green;
+}

@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MealTo {
+
+    private final long id;
+
     private final LocalDateTime dateTime;
 
     private final String description;
@@ -12,19 +15,22 @@ public class MealTo {
 
     private final boolean excess;
 
-    private final String parsedDateTime;
     public  static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
+    public MealTo(long id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
-        this.parsedDateTime = dateTime.format(FORMATTER);
     }
 
     public LocalDateTime getDateTime() {
         return dateTime;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getDescription() {
@@ -37,10 +43,6 @@ public class MealTo {
 
     public boolean isExcess() {
         return excess;
-    }
-
-    public String getParsedDateTime() {
-        return parsedDateTime;
     }
 
     @Override

@@ -6,7 +6,7 @@
 <body>
 <h3><a href="${pageContext.servletContext.contextPath}/index.html">Home</a></h3>
 <hr>
-<form action="${pageContext.servletContext.contextPath}/edit" method="post">
+<form action="${pageContext.servletContext.contextPath}/meals" method="post">
     <table>
         <legend> Редактирование приемов пищи </legend>
         <input type="hidden"

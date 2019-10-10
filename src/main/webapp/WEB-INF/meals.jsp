@@ -25,8 +25,8 @@
             <td>${mlsto.dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}</td>
             <td>${mlsto.description}</td>
             <td>${mlsto.calories}</td>
-            <td><a href="${pageContext.servletContext.contextPath}/edit?id=${mlsto.id}">edit</a></td>
-            <td><a href="${pageContext.servletContext.contextPath}/delete?id=${mlsto.id}">delete</a></td>
+            <td><a href="${pageContext.servletContext.contextPath}/meals?action=update&id=${mlsto.id}">edit</a></td>
+            <td><a href="${pageContext.servletContext.contextPath}/meals?action=delete&id=${mlsto.id}">delete</a></td>
         </tr>
     </c:forEach>
 </table>

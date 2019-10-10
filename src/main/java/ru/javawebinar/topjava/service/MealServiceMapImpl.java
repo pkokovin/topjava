@@ -1,11 +1,9 @@
 package ru.javawebinar.topjava.service;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.moc.MealStorage;
+import ru.javawebinar.topjava.dao.MealStorage;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MealServiceMapImpl implements MealService {
     MealStorage storage = MealStorage.getInstance();
@@ -15,8 +13,8 @@ public class MealServiceMapImpl implements MealService {
     }
 
     @Override
-    public void delete(Meal meal) {
-        storage.delete(meal);
+    public void delete(long id) {
+        storage.delete(id);
     }
 
     @Override
@@ -26,21 +24,11 @@ public class MealServiceMapImpl implements MealService {
 
     @Override
     public List<Meal> getAll() {
-        return storage.get()
-                .entrySet()
-                .stream()
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
+        return storage.get();
     }
 
     @Override
     public Meal getById(long mealId) {
-        return storage.get()
-                .entrySet()
-                .stream()
-                .filter(x -> x.getKey() == mealId)
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .get();
+        return storage.getById(mealId);
     }
 }

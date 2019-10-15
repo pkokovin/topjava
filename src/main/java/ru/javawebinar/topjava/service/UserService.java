@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -14,6 +15,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class UserService {
 
+    @Resource
     private final UserRepository repository;
 
     @Autowired

@@ -49,6 +49,7 @@
             </tr>
         </c:forEach>
     </table>
+    <br>
 </section>
 </body>
 </html>

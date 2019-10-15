@@ -23,7 +23,9 @@ public class MealsUtil {
             new Meal(null, 1, LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
             new Meal(null, 1, LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
             new Meal(null, 1, LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-            new Meal(null, 1, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
+            new Meal(null, 1, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510),
+            new Meal(null, 2, LocalDateTime.of(2015, Month.APRIL, 29, 20, 0), "Ужин", 510),
+            new Meal(null, 2, LocalDateTime.of(2015, Month.APRIL, 30, 20, 0), "Ужин", 510)
     );
 
     public static List<MealTo> getTos(Collection<Meal> meals, int caloriesPerDay) {
@@ -47,6 +49,6 @@ public class MealsUtil {
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {
-        return new MealTo(meal.getId(), meal.getUserId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
+        return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }

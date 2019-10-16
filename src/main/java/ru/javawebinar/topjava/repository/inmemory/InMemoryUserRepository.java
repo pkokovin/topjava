@@ -45,10 +45,8 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         List<User> users = new ArrayList<>(repository.values());
-        if (users.size() > 0) {
-            users.sort(Comparator.comparing(AbstractNamedEntity::getName).thenComparing(AbstractBaseEntity::getId));
-            return users;
-        } else return Collections.emptyList();
+        users.sort(Comparator.comparing(AbstractNamedEntity::getName).thenComparing(AbstractBaseEntity::getId));
+        return users;
     }
 
     @Override

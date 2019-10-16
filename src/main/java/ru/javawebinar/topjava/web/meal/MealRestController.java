@@ -25,44 +25,44 @@ public class MealRestController {
     @Autowired
     private MealService service;
 
-    public List<Meal> getAll(int userId) {
+    public List<Meal> getAll() {
         log.info("getAll");
-        return service.getAll(userId);
+        return service.getAll(authUserId());
     }
 
-    public List<MealTo> getFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getFiltered");
         startDate = (startDate == null) ? LocalDate.MIN : startDate;
         endDate = (endDate == null) ? LocalDate.MAX : endDate;
         startTime = (startTime == null) ? LocalTime.MIN : startTime;
         endTime = (endTime == null) ? LocalTime.MAX : endTime;
-        return getFilteredTos(service.getAllFiltered(userId, startDate, endDate), DEFAULT_CALORIES_PER_DAY, startTime, endTime);
+        return getFilteredTos(service.getAllFiltered(authUserId(), startDate, endDate), DEFAULT_CALORIES_PER_DAY, startTime, endTime);
     }
 
-    public Meal get(int userId, int id) {
+    public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(userId, id);
+        return service.get(authUserId(), id);
     }
 
-    public Meal save(int userId, Meal meal) {
+    public Meal save(Meal meal) {
         log.info("create {}", meal);
         try {
             checkNew(meal);
         } catch (IllegalArgumentException e) {
-            update(userId, meal, meal.getId());
+            update(meal, meal.getId());
         }
 
-        return service.create(userId, meal);
+        return service.create(authUserId(), meal);
     }
 
-    public void delete(int userId, int id) {
+    public void delete(int id) {
         log.info("delete {}", id);
-        service.delete(userId, id);
+        service.delete(authUserId(), id);
     }
 
-    private void update(int userId, Meal meal, int id) {
+    private void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        service.update(userId, meal);
+        service.update(authUserId(), meal);
     }
 }

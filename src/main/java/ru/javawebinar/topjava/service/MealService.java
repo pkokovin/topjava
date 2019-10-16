@@ -6,7 +6,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import static ru.javawebinar.topjava.util.ValidationUtil.*;
 @Service
 public class MealService {
 
-    @Resource
     private final MealRepository repository;
 
     @Autowired

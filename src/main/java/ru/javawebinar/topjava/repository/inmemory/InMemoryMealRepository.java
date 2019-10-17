@@ -44,8 +44,11 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         // treat case: update, but not present in storage
-        Meal userMealToUpdate = repository.get(userId).get(meal.getId());
-
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        Meal userMealToUpdate = null;
+        if (userMeals != null) {
+            userMealToUpdate = userMeals.get(meal.getId());
+        }
         if (userMealToUpdate != null && userMealToUpdate.getUserId() == userId) {
             return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         }
@@ -54,34 +57,43 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public boolean delete(int userId, int id) {
-        Meal toDel = repository.get(userId).get(id);
-        if (toDel != null && toDel.getUserId() == userId) {
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        Meal userMealToDelete = null;
+        if (userMeals != null) {
+            userMealToDelete = userMeals.get(id);
+        }
+        if (userMealToDelete != null) {
             return repository.get(userId).remove(id) != null;
         } else return false;
     }
 
     @Override
     public Meal get(int userId, int id) {
-        Meal toGet = repository.get(userId).get(id);
-
-        return toGet = toGet != null && toGet.getUserId() == userId ? toGet : null;
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        Meal userMealToGet = null;
+        if (userMeals != null) {
+            userMealToGet = userMeals.get(id);
+        }
+        return userMealToGet;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.get(userId).values()
-                .stream()
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return getAllCommon(userId, meal -> true);
     }
 
     private List<Meal> getAllCommon(int userId, Predicate<Meal> filter) {
-        return repository.get(userId)
-                .values()
-                .stream()
-                .filter(filter)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        List<Meal> common = new ArrayList<>();
+        if (userMeals != null) {
+            common = repository.get(userId)
+                    .values()
+                    .stream()
+                    .filter(filter)
+                    .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                    .collect(Collectors.toList());
+        }
+        return common;
     }
 
     @Override

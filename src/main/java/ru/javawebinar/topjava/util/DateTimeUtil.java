@@ -19,7 +19,7 @@ public class DateTimeUtil {
 //    }
 
     public static <T extends Temporal> boolean isBetween(T ldt, T start, T end) {
-        Class<? extends Temporal> type = ldt.getClass();
+        Class type = ldt.getClass();
         if (type == LocalTime.class) {
             LocalTime ltCheck = LocalTime.from(ldt);
             LocalTime startCheck = LocalTime.from(start);
@@ -30,8 +30,6 @@ public class DateTimeUtil {
             LocalDate ldCheck = LocalDate.from(ldt);
             LocalDate startCheck = LocalDate.from(start);
             LocalDate endCheck = LocalDate.from(end);
-            int moreMin = ldCheck.compareTo(startCheck);
-            int lessMax = ldCheck.compareTo(endCheck);
             return ldCheck.compareTo(startCheck) >= 0 && ldCheck.compareTo(endCheck) <= 0;
         }
         return false;

@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web.user;
 
 import org.junit.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.UserTestData;

@@ -22,6 +22,7 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @ContextConfiguration({
@@ -73,10 +74,17 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenDates() throws Exception {
-        meals.sort(Comparator.comparing(Meal::getDateTime).reversed());
-        List<Meal> mealsAct = service.getBetweenDates(LocalDate.of(2015, Month.MAY, 30),
-                LocalDate.of(2015, Month.MAY, 31), USER.getId());
-        assertMatch(mealsAct, meals);
+        LocalDate startDate = LocalDate.of(2015, Month.MAY, 30);
+        LocalDate endDate = LocalDate.of(2015, Month.MAY, 30);
+        List<Meal> mealsAct = service.getBetweenDates(startDate,
+                endDate, USER.getId());
+        assertMatch(mealsAct, meals.stream()
+                .filter(x -> x.getDate().isEqual(startDate)
+                || x.getDate().isAfter(startDate)
+                && x.getDate().equals(endDate)
+                || x.getDate().isBefore(endDate))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+                .collect(Collectors.toList()));
     }
 
     @Test

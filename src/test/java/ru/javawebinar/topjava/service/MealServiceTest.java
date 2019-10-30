@@ -2,13 +2,13 @@ package ru.javawebinar.topjava.service;
 
 
 import org.junit.AfterClass;
+import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.TestRule;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -40,53 +38,74 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+    private static final String SEPARATOR = System.lineSeparator()
+            + "======================================="
+            + System.lineSeparator();
+    private static void logInfo(Description description, long nanos) {
+        String testName = description.getMethodName();
+        String str = null;
+        if (testName.length() >= 15) {
+            str = String.format("||\t%s\t||\t%d\t||",
+                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        }
+        if (testName.length() >= 12 && testName.length() < 15) {
+            str = String.format("||\t%s\t\t||\t%d\t||",
+                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        }
+        if (testName.length() >= 8 && testName.length() < 12) {
+            str = String.format("||\t%s\t\t\t||\t%d\t||",
+                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        }
+        if (testName.length() >= 4 && testName.length() < 8) {
+            str = String.format("||\t%s\t\t\t\t||\t%d\t||",
+                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        }
+        if (testName.length() >= 1 && testName.length() < 4) {
+            str = String.format("||\t%s\t\t\t\t\t||\t%d\t||",
+                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+        }
+
+        tests.add(str);
+        log.info(String.format("\t%s\t%d\t",testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
+    }
     private static List<String> tests = new ArrayList<>();
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     @Rule
-    public TestRule watcher = new TestRule() {
-
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        public Statement apply(Statement statement, Description description) {
-            return new Statement() {
-                private long timeStart = System.currentTimeMillis();
-                private long timeEnd;
-                private Calendar cal = Calendar.getInstance();
-                private DateFormat dateFormat = new SimpleDateFormat("YYYY-mm-dd HH:MM");
-
-                @Override
-                public void evaluate() throws Throwable {
-                    statement.evaluate();
-                    timeEnd = System.currentTimeMillis();
-                    double seconds = (timeEnd - timeStart) / 1000.0;
-
-                    tests.add("Test "
-                            + description.getMethodName()
-                            + " completed - ran in: "
-                            + new DecimalFormat("0.000").format(seconds) + " sec");
-                    log.info("Test "
-                            + description.getMethodName()
-                            + " completed - ran in: "
-                            + new DecimalFormat("0.000").format(seconds) + " sec");
-                }
-            };
+        protected void succeeded(long nanos, Description description) {
+//            logInfo(description, nanos);
         }
 
+        @Override
+        protected void failed(long nanos, Throwable e, Description description) {
+//            logInfo(description, nanos);
+        }
+
+        @Override
+        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+            logInfo(description, nanos);
+        }
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            logInfo(description, nanos);
+        }
     };
+
 
     @AfterClass
     public static void after() {
-        System.out
-                .println("==========================================================================="
-                        + System.lineSeparator());
-        System.out.println("Tests summary: "
-                + System.lineSeparator());
+        StringBuilder builder = new StringBuilder(SEPARATOR)
+                .append(System.lineSeparator()
+                        + "||\tTests summary: \t\t\t\t\t||"
+                        + System.lineSeparator())
+                .append(SEPARATOR);
 
-        tests.forEach(System.out::println);
-        System.out
-                .println(System.lineSeparator()
-                        + "==========================================================================="
-                        + System.lineSeparator());
+        tests.forEach(x -> builder.append(x + System.lineSeparator()));
+        builder.append(SEPARATOR);
+        log.info(builder.toString());
     }
 
 

@@ -14,7 +14,6 @@
     </appender>
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <withJansi>true</withJansi>
         <encoder>
             <charset>UTF-8</charset>
             <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{15}) %boldGreen(%class{50}.%M:%L) - %msg%n</pattern>

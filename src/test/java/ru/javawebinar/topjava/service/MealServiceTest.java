@@ -1,8 +1,6 @@
 package ru.javawebinar.topjava.service;
 
-
 import org.junit.AfterClass;
-import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -19,11 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -37,77 +32,46 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static final String SEPARATOR = System.lineSeparator()
-            + "======================================="
-            + System.lineSeparator();
-    private static void logInfo(Description description, long nanos) {
-        String testName = description.getMethodName();
-        String str = null;
-        if (testName.length() >= 15) {
-            str = String.format("||\t%s\t||\t%d\t||",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-        }
-        if (testName.length() >= 12 && testName.length() < 15) {
-            str = String.format("||\t%s\t\t||\t%d\t||",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-        }
-        if (testName.length() >= 8 && testName.length() < 12) {
-            str = String.format("||\t%s\t\t\t||\t%d\t||",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-        }
-        if (testName.length() >= 4 && testName.length() < 8) {
-            str = String.format("||\t%s\t\t\t\t||\t%d\t||",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-        }
-        if (testName.length() >= 1 && testName.length() < 4) {
-            str = String.format("||\t%s\t\t\t\t\t||\t%d\t||",
-                    testName, TimeUnit.NANOSECONDS.toMicros(nanos));
-        }
 
-        tests.add(str);
-        log.info(String.format("\t%s\t%d\t",testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
-    }
-    private static List<String> tests = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
+
+    private static final String SEPARATOR = System.lineSeparator()
+            + "=============================================="
+            + System.lineSeparator();
+
+    private static StringBuilder tests = new StringBuilder();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
-        @Override
-        protected void succeeded(long nanos, Description description) {
-//            logInfo(description, nanos);
-        }
-
-        @Override
-        protected void failed(long nanos, Throwable e, Description description) {
-//            logInfo(description, nanos);
-        }
-
-        @Override
-        protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
-            logInfo(description, nanos);
-        }
-
         @Override
         protected void finished(long nanos, Description description) {
             logInfo(description, nanos);
         }
+
     };
 
+    private static void logInfo(Description description, long nanos) {
+        String testName = description.getMethodName();
+        String str = String.format("||%-20s||%-20d||", testName, TimeUnit.NANOSECONDS.toMicros(nanos));
+
+        tests.append(str + System.lineSeparator());
+        log.info(String.format("\t%s\t%d\t", testName, TimeUnit.NANOSECONDS.toMicros(nanos)));
+    }
 
     @AfterClass
     public static void after() {
         StringBuilder builder = new StringBuilder(SEPARATOR)
                 .append(System.lineSeparator()
-                        + "||\tTests summary: \t\t\t\t\t||"
+                        + String.format("||\tTests summary: %-25s||", " ")
                         + System.lineSeparator())
+                .append(SEPARATOR)
+                .append(tests.toString())
                 .append(SEPARATOR);
-
-        tests.forEach(x -> builder.append(x + System.lineSeparator()));
-        builder.append(SEPARATOR);
         log.info(builder.toString());
     }
-
 
     @Autowired
     private MealService service;

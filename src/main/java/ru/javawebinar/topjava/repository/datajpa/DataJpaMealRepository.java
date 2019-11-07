@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -37,8 +38,8 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = crudRepository.findById(id).orElse(null);
-        return meal != null && meal.getUser().getId() == userId ? meal : null;
+        Optional<Meal> meal = crudRepository.findById(id).filter(x -> x.getUser().getId() == userId);
+        return meal.orElse(null);
     }
 
     @Override

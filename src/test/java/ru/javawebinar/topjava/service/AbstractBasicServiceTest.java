@@ -67,25 +67,4 @@ public abstract class AbstractBasicServiceTest {
                 "\n---------------------------------");
     }
 
-    @Test
-    public abstract void delete() throws Exception;
-
-    @Test
-    public abstract void deleteNotFound() throws Exception;
-
-    @Test
-    public abstract void get() throws Exception;
-
-    @Test
-    public abstract void getNotFound() throws Exception;
-
-    @Test
-    public abstract void create() throws Exception;
-
-    @Test
-    public abstract void update() throws Exception;
-
-    @Test
-    public abstract void getAll() throws Exception;
-
 }

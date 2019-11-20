@@ -13,7 +13,7 @@
 <section>
     <hr/>
     <h3><spring:message code="meal.title"/></h3>
-    <form method="get" action="${context}/meals/all">
+    <form method="get" action="${context}/meals">
         <%--
         <input type="hidden" name="action" value="filter">
         --%>
@@ -59,7 +59,7 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="${context}/meals/${meal.id}"><spring:message code="meal.update"/></a></td>
+                <td><a href="${context}/meals/update/${meal.id}"><spring:message code="meal.update"/></a></td>
                 <td><a href="${context}/meals/delete/${meal.id}"><spring:message code="meal.delete"/></a></td>
             </tr>
         </c:forEach>

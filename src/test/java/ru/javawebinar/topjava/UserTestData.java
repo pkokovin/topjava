@@ -3,9 +3,7 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -25,6 +23,17 @@ public class UserTestData {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
+        return updated;
+    }
+
+    public static User getUpdatedAdmin() {
+        User updated = new User(ADMIN);
+        updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(Role.ROLE_ADMIN);
+        roleSet.add(Role.ROLE_USER);
+        updated.setRoles(roleSet);
         return updated;
     }
 

@@ -1,6 +1,5 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -23,13 +22,10 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @Controller
 @RequestMapping(value = "/meals")
-public class JspMealController {
+public class JspMealController extends AbstractMealController{
 
-    @Autowired
-    private MealService service;
-
-    @GetMapping("/all")
-    public String listMeals(HttpServletRequest request, Model model) {
+    @GetMapping("")
+    public String list(HttpServletRequest request, Model model) {
         int userId = SecurityUtil.authUserId();
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
@@ -41,48 +37,46 @@ public class JspMealController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteMeal(@PathVariable String id) {
+    public String delete(@PathVariable String id) {
         int userId = SecurityUtil.authUserId();
+        log.info("delete meal {} for user {}", id, userId);
         service.delete(Integer.parseInt(id), userId);
-        return "redirect:/meals/all";
+        return "redirect:/meals";
     }
 
     @GetMapping("/create")
-    public String createMeal(Model model) {
+    public String create(Model model) {
         int userId = SecurityUtil.authUserId();
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
+        log.info("create view {} for user {}", meal, userId);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @PostMapping("/create")
-    public String createPostMeal(HttpServletRequest request, Model model) {
-        int userId = SecurityUtil.authUserId();
-        Meal meal = new Meal(
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
-        service.create(meal, userId);
-        return "redirect:/meals/all";
-    }
-
-    @GetMapping("/{id}")
-    public String updateGetMeal(@PathVariable String id, Model model) {
+    @GetMapping("/update/{id}")
+    public String updateGet(@PathVariable String id, Model model) {
         int userId = SecurityUtil.authUserId();
         Meal meal = service.get(Integer.parseInt(id), userId);
+        log.info("update view {} for user {}", meal, userId);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @PostMapping("/{id}")
-    public String updatePostMeal(@PathVariable String id, HttpServletRequest request, Model model) {
+    @PostMapping("")
+    public String createOrUpdate(HttpServletRequest request) {
         int userId = SecurityUtil.authUserId();
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
-        meal.setId(Integer.parseInt(id));
-        service.update(meal, userId);
-        return "redirect:/meals/all";
+        if (request.getParameter("id").isEmpty()) {
+            log.info("create {} for user {}", meal, userId);
+            service.create(meal, userId);
+        } else {
+            meal.setId(Integer.parseInt(request.getParameter("id")));
+            log.info("create {} for user {}", meal, userId);
+            service.update(meal, userId);
+        }
+        return "redirect:/meals";
     }
 }

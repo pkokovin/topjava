@@ -9,7 +9,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -49,19 +48,29 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         assertMatch(service.get(newId), newUser);
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test
     public void duplicateMailCreate() throws Exception {
+        thrown.expect(DataAccessException.class);
         service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void delete() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(USER_ID);
         service.get(USER_ID);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
+    public void deleteAdmin() throws Exception {
+        thrown.expect(NotFoundException.class);
+        service.delete(ADMIN_ID);
+        service.get(ADMIN_ID);
+    }
+
+    @Test
     public void deletedNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.delete(1);
     }
 
@@ -71,8 +80,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         assertMatch(user, USER);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
+    public void getAdmin() throws Exception {
+        User user = service.get(ADMIN_ID);
+        assertMatch(user, ADMIN);
+    }
+
+    @Test
     public void getNotFound() throws Exception {
+        thrown.expect(NotFoundException.class);
         service.get(1);
     }
 
@@ -83,10 +99,16 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void getByEmailAdmin() throws Exception {
+        User user = service.getByEmail("admin@gmail.com");
+        assertMatch(user, ADMIN);
+    }
+
+    @Test
     public void update() throws Exception {
-        User updated = getUpdated();
+        User updated = getUpdatedAdmin();
         service.update(updated);
-        assertMatch(service.get(USER_ID), updated);
+        assertMatch(service.get(ADMIN_ID), updated);
     }
 
     @Test

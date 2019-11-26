@@ -11,6 +11,7 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
+import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 
@@ -50,7 +51,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MealsUtil.getTos(MEALS, MealsUtil.DEFAULT_CALORIES_PER_DAY)));
+                .andExpect(contentJson(MealsUtil.getTos(MEALS, SecurityUtil.authUserCaloriesPerDay())));
     }
 
     @Test
@@ -88,13 +89,11 @@ class MealRestControllerTest extends AbstractControllerTest {
     @Test
     void getBetween() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL
-                + "filter"
-                + "?startDate=" + LDT1
-                + "&startTime=" + LDT1
-                + "&endDate=" + LDT2
-                + "&endTime=" + LDT2))
+                + "filter")
+                .param("startDate", "2015-05-30T07:00").param("startTime", "2015-05-30T07:00")
+                .param("endDate", "2015-05-30T22:00").param("endTime", "2015-05-30T22:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(contentJson(MealsUtil.getTos(List.of(MEAL3, MEAL2, MEAL1), MealsUtil.DEFAULT_CALORIES_PER_DAY)));
+                .andExpect(contentJson(MealsUtil.getTos(List.of(MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));
     }
 }

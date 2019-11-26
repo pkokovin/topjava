@@ -61,6 +61,10 @@ public class MealRestController extends AbstractMealController {
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
                                    @RequestParam(value = "endTime", required = false)
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
-        return super.getBetween(startDate.toLocalDate(), startTime.toLocalTime(), endDate.toLocalDate(), endTime.toLocalTime());
+        LocalDate startLd = startDate != null ? startDate.toLocalDate() : null;
+        LocalTime startLt = startTime != null ? startTime.toLocalTime() : null;
+        LocalDate endLd = endDate != null ? endDate.toLocalDate() : null;
+        LocalTime endLt = endTime != null ? endTime.toLocalTime() : null;
+        return super.getBetween(startLd, startLt, endLd, endLt);
     }
 }

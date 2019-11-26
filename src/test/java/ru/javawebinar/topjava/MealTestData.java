@@ -1,17 +1,24 @@
 package ru.javawebinar.topjava;
 
+import org.springframework.test.web.servlet.ResultMatcher;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.javawebinar.topjava.TestUtil.readFromJsonMvcResult;
+import static ru.javawebinar.topjava.TestUtil.readListFromJsonMvcResult;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
     public static final int MEAL1_ID = START_SEQ + 2;
     public static final int ADMIN_MEAL_ID = START_SEQ + 9;
+    public static final LocalDateTime LDT1 = LocalDateTime.of(2015, Month.MAY, 30, 07, 00);
+    public static final LocalDateTime LDT2 = LocalDateTime.of(2015, Month.MAY, 30, 22, 00);
 
     public static final Meal MEAL1 = new Meal(MEAL1_ID, of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500);
     public static final Meal MEAL2 = new Meal(MEAL1_ID + 1, of(2015, Month.MAY, 30, 13, 0), "Обед", 1000);
@@ -34,14 +41,30 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "excess", "user");
     }
 
-    public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
+    public static <T> void assertMatch(Iterable<T> actual, T... expected) {
         assertMatch(actual, List.of(expected));
     }
 
-    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
+    public static <T> void assertMatch(Iterable<T> actual, Iterable<T> expected) {
+        assertThat(actual).usingElementComparatorIgnoringFields("excess", "user").isEqualTo(expected);
+    }
+
+    public static <T> ResultMatcher contentJson(T... expected) {
+        return result -> assertMatch((Iterable<T>) readListFromJsonMvcResult(result, expected[0].getClass()), List.of(expected));
+    }
+
+    public static <T> ResultMatcher contentJson(List<T> expected) {
+        return result -> assertMatch((Iterable<T>) readListFromJsonMvcResult(result, expected.get(0).getClass()), expected);
+    }
+
+//    public static ResultMatcher contentJsonMealTo(List<MealTo> expected) {
+//        return result -> assertMatch(readListFromJsonMvcResult(result, MealTo.class), expected);
+//    }
+
+    public static ResultMatcher contentJson(Meal expected) {
+        return result -> assertMatch(readFromJsonMvcResult(result, Meal.class), expected);
     }
 }

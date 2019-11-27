@@ -17,7 +17,7 @@ import static ru.javawebinar.topjava.MealTestData.*;
 class RootControllerTest extends AbstractControllerTest {
 
     @Test
-    public void getUsers() throws Exception {
+    void getUsers() throws Exception {
         mockMvc.perform(get("/users"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -34,19 +34,12 @@ class RootControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void getMeals() throws Exception {
+    void getMeals() throws Exception {
         mockMvc.perform(get("/meals"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("meals"))
                 .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
-                .andExpect(model().attribute("meals",
-                        new AssertionMatcher<List<MealTo>>() {
-                            @Override
-                            public void assertion(List<MealTo> actual) throws AssertionError {
-                                assertMatch(actual, MealsUtil.getTos(MEALS, SecurityUtil.authUserCaloriesPerDay()));
-                            }
-                        }
-                ));
+                .andExpect(model().attribute("meals", MealsUtil.getTos(MEALS, SecurityUtil.authUserCaloriesPerDay())));
     }
 }

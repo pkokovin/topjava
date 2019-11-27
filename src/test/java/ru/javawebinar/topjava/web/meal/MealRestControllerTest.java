@@ -15,8 +15,6 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,7 +23,7 @@ import static ru.javawebinar.topjava.MealTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.TestUtil.readFromJson;
+import static ru.javawebinar.topjava.TestUtil.*;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 
@@ -42,7 +40,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MEAL1));
+                .andExpect(result -> assertMatch(readFromJsonMvcResult(result, Meal.class), MEAL1));
     }
 
     @Test
@@ -90,8 +88,8 @@ class MealRestControllerTest extends AbstractControllerTest {
     void getBetween() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get(REST_URL
                 + "filter")
-                .param("startDate", "2015-05-30T07:00").param("startTime", "2015-05-30T07:00")
-                .param("endDate", "2015-05-30T22:00").param("endTime", "2015-05-30T22:00"))
+                .param("startDate", "2015-05-30").param("startTime", "07:00")
+                .param("endDate", "2015-05-30").param("endTime", "22:00"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(contentJson(MealsUtil.getTos(List.of(MEAL3, MEAL2, MEAL1), SecurityUtil.authUserCaloriesPerDay())));

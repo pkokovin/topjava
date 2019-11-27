@@ -42,27 +42,20 @@ public class MealTestData {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "user");
     }
 
-    public static <T> void assertMatch(Iterable<T> actual, T... expected) {
+    public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
         assertMatch(actual, List.of(expected));
     }
 
-    public static <T> void assertMatch(Iterable<T> actual, Iterable<T> expected) {
+
+    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
     }
 
-    public static <T> ResultMatcher contentJson(T... expected) {
-        return result -> assertMatch((Iterable<T>) readListFromJsonMvcResult(result, expected[0].getClass()), List.of(expected));
+    public static ResultMatcher contentJson(MealTo... expected) {
+        return contentJson(List.of(expected));
     }
 
-    public static <T> ResultMatcher contentJson(List<T> expected) {
-        return result -> assertMatch((Iterable<T>) readListFromJsonMvcResult(result, expected.get(0).getClass()), expected);
-    }
-
-//    public static ResultMatcher contentJsonMealTo(List<MealTo> expected) {
-//        return result -> assertMatch(readListFromJsonMvcResult(result, MealTo.class), expected);
-//    }
-
-    public static ResultMatcher contentJson(Meal expected) {
-        return result -> assertMatch(readFromJsonMvcResult(result, Meal.class), expected);
+    public static ResultMatcher contentJson(Iterable<MealTo> expected) {
+        return result -> assertThat(readListFromJsonMvcResult(result, MealTo.class)).isEqualTo(expected);
     }
 }

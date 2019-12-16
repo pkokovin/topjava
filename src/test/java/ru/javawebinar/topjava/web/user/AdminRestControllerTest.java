@@ -89,6 +89,14 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void updateWithNotValidData() throws Exception {
+        User updated = UserTestData.getUpdated();
+        updated.setEmail("");
+        perform(doPut(USER_ID).jsonBody(updated).basicAuth(ADMIN))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void createWithLocation() throws Exception {
         User newUser = UserTestData.getNew();
         ResultActions action = perform(doPost().jsonUserWithPassword(newUser).basicAuth(ADMIN))
@@ -99,6 +107,14 @@ class AdminRestControllerTest extends AbstractControllerTest {
         newUser.setId(newId);
         USER_MATCHERS.assertMatch(created, newUser);
         USER_MATCHERS.assertMatch(userService.get(newId), newUser);
+    }
+
+    @Test
+    void createWithLocationWithNotValidData() throws Exception {
+        User newUser = UserTestData.getNew();
+        newUser.setCaloriesPerDay(0);
+        ResultActions action = perform(doPost().jsonUserWithPassword(newUser).basicAuth(ADMIN))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
